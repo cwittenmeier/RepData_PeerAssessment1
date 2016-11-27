@@ -1,14 +1,10 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 df <-read.csv("activity.csv")
 ```
 
@@ -19,8 +15,8 @@ First we calaculate a dataframe, that contains in the first column the day,
 in the second column the sum of all steps over the day and the third column 
 contains the average of steps of a 5-min interval.
 
-```{r}
 
+```r
 len<-length(unique(df$date))
 stepsdf<-data.frame("day" = character(len), "sum" = numeric(len),"average" = numeric(len) ,stringsAsFactors=FALSE)
 
@@ -33,10 +29,20 @@ for (i in 1:len){
 }
 ```
 We now plot the histogram and the summary of the day-sums:
-```{r}
-hist(stepsdf$sum,breaks=20,main="Histogram of steps per day", xlab="sum of steps per day")
-summary(stepsdf$sum)
 
+```r
+hist(stepsdf$sum,breaks=20,main="Histogram of steps per day", xlab="sum of steps per day")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
+summary(stepsdf$sum)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+##      41    8841   10760   10770   13290   21190       8
 ```
 ##What is the average daily activity pattern?
 
@@ -44,8 +50,8 @@ For every time interval we calculate the average of steps over all days and stor
 the data_frame "stepns_int_df". We plot then the first col. (interval) against the second col. 
 (average of steps of certain interval over all days.):
 
-```{r}
 
+```r
 len<-length(unique(df$interval))
 steps_int_df<-data.frame("interval" = integer(len), "average" = numeric(len) ,stringsAsFactors=FALSE)
 
@@ -59,28 +65,43 @@ for (i in 1:len){
 plot(steps_int_df[,1], steps_int_df[,2],type="l", xlab="interval",ylab="average count of steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
 ###What is the 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+
+```r
 maximum<-max(steps_int_df[,2])
 ```
 Maximum:
-```{r}
+
+```r
 print(steps_int_df[which(steps_int_df$average==maximum),])
+```
+
+```
+##     interval  average
+## 104      835 206.1698
 ```
 
 ##Imputing missing values
 
 We first calculate the count of missing values for the step-variable:
 
-```{r}
+
+```r
 sum(is.na(df$steps))
+```
+
+```
+## [1] 2304
 ```
 We copy the original dataframe "df" to a datframe "df2", where the missing values are replaced by the
 average of the interval, that we have stored in the "steps_int_df" dataframe:
 
 
-```{r}
+
+```r
 df2<-df
 
 for(i in 1:nrow(df)){
@@ -96,8 +117,8 @@ for(i in 1:nrow(df)){
 
 We generate an analogous datframe that contains the daily-sums and plot an histogram of theses sums and the 
 summary.
-```{r}
 
+```r
 len<-length(unique(df2$date))
 stepsdf2<-data.frame("day" = character(len), "sum" = numeric(len),"average" = numeric(len) ,stringsAsFactors=FALSE)
 
@@ -109,7 +130,17 @@ for (i in 1:len){
                 
 }
 hist(stepsdf2$sum,breaks=20, main="Histogram of steps per day", xlab="sum of steps per day")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
+```r
 summary(stepsdf2$sum)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      41    9819   10770   10770   12810   21190
 ```
 
 **So we see, that the mass of the distribution was shifted a bit to the left.**
@@ -125,8 +156,8 @@ a "workday"-average, and store the information as a row in the dataframe "int_av
 
 The final plot shows, that at the weekend the steps are more equally distributed over the day than on the workdays. 
 
-```{r}
 
+```r
 library(lattice)
 vec<-weekdays(as.Date(df2$date))
 fac<-factor(vec=="Sonntag"|vec=="Samstag", labels=c("workday","weekend"))
@@ -151,8 +182,9 @@ names(int_av)[2]<-"daykind"
 names(int_av)[3]<-"average"
 
 xyplot(average~interval|daykind,data=int_av,layout=c(1,2),type="l")
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
 
 
